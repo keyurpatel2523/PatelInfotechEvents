@@ -16,6 +16,7 @@ import {
   TooltipProvider, TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { CURRENCY_SYMBOL } from "@/lib/constants";
 
 /* ─── Types ───────────────────────────────────────────────── */
 export interface ServiceCardData {
@@ -142,7 +143,7 @@ function PriceTag({
 }) {
   const base = price === 0
     ? "Free"
-    : `₹${price.toLocaleString("en-IN")}`;
+    : `${CURRENCY_SYMBOL}${price.toLocaleString()}`;
 
   const textSize = size === "md" ? "text-base" : "text-sm";
 
@@ -159,7 +160,7 @@ function PriceTag({
       </span>
       {price > 0 && originalPrice && originalPrice > price && (
         <span className="text-xs tabular-nums line-through" style={{ color: "var(--text-4)" }}>
-          ₹{originalPrice.toLocaleString("en-IN")}
+          {CURRENCY_SYMBOL}{originalPrice.toLocaleString()}
         </span>
       )}
       {price > 0 && priceUnit && (
@@ -277,7 +278,7 @@ export interface ServiceCardProps extends VariantProps<typeof cardVariants> {
   showQuickActions?: boolean;
 }
 
-export function ServiceCard({
+function ServiceCardInner({
   service,
   variant = "grid",
   className,
@@ -288,6 +289,8 @@ export function ServiceCard({
 }: ServiceCardProps) {
   const [isSaved, setIsSaved] = React.useState(saved);
   const [imgLoaded, setImgLoaded] = React.useState(false);
+
+  React.useEffect(() => setIsSaved(saved), [saved]);
 
   function handleSave(e: React.MouseEvent) {
     e.preventDefault();
@@ -650,7 +653,7 @@ export function ServiceCard({
               )}
               style={{ color: service.price > 0 ? "var(--text-1)" : undefined }}
             >
-              {service.price === 0 ? "Free" : `₹${service.price.toLocaleString("en-IN")}`}
+              {service.price === 0 ? "Free" : `${CURRENCY_SYMBOL}${service.price.toLocaleString()}`}
             </span>
           </div>
 
@@ -659,3 +662,5 @@ export function ServiceCard({
     </TooltipProvider>
   );
 }
+
+export const ServiceCard = React.memo(ServiceCardInner);

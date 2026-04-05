@@ -7,12 +7,12 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const SUGGESTIONS = [
-  "Tech Summit Bangalore",
-  "Jazz Festival Mumbai",
-  "Yoga Retreat Rishikesh",
-  "Food Carnival Delhi",
-  "Art Expo Chennai",
-  "Startup Networking",
+  "London Tech Summit",
+  "Brixton Jazz Festival",
+  "Cotswolds Wellness Retreat",
+  "London Street Food Festival",
+  "Startup Founders Summit",
+  "Contemporary Art Expo",
 ];
 
 export function SearchBar({ className }: { className?: string }) {

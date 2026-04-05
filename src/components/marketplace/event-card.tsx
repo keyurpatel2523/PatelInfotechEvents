@@ -22,7 +22,7 @@ export function EventCard({ event, variant = "default", className }: EventCardPr
   const fillPercent = Math.round((event.attendees / event.capacity) * 100);
   const almostFull = fillPercent >= 85;
 
-  const formattedDate = new Date(event.date).toLocaleDateString("en-IN", {
+  const formattedDate = new Date(event.date).toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -138,7 +138,7 @@ export function EventCard({ event, variant = "default", className }: EventCardPr
               ) : (
                 <div>
                   <span className="text-lg font-bold text-[--text-1]">
-                    {formatCurrency(event.price, "INR")}
+                    {formatCurrency(event.price, "GBP", "en-GB")}
                   </span>
                   {event.priceLabel && (
                     <span className="text-xs text-[--text-3] ml-1">/{event.priceLabel}</span>
@@ -198,7 +198,7 @@ export function EventCard({ event, variant = "default", className }: EventCardPr
               <span className="text-xs font-medium text-[--text-1]">{event.rating}</span>
             </div>
             <span className="text-sm font-bold text-[--text-1]">
-              {event.price === 0 ? "Free" : formatCurrency(event.price, "INR")}
+              {event.price === 0 ? "Free" : formatCurrency(event.price, "GBP", "en-GB")}
             </span>
           </div>
         </div>
@@ -283,7 +283,7 @@ export function EventCard({ event, variant = "default", className }: EventCardPr
               <span className="text-sm font-bold text-green-600">Free</span>
             ) : (
               <span className="text-sm font-bold text-[--text-1]">
-                {formatCurrency(event.price, "INR")}
+                {formatCurrency(event.price, "GBP", "en-GB")}
               </span>
             )}
           </div>
