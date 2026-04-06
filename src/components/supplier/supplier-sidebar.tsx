@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva } from "class-variance-authority";
 import {
-  LayoutDashboard, Package, Calendar, TrendingUp,
+  LayoutDashboard, Package, Calendar, CalendarDays, TrendingUp,
   Star, User, ChevronLeft, ChevronRight, Zap,
   Settings, HelpCircle,
 } from "lucide-react";
@@ -23,12 +23,13 @@ interface NavItem {
 }
 
 const NAV_MAIN: NavItem[] = [
-  { id: "overview",  label: "Overview",   href: "/supplier",          icon: LayoutDashboard },
-  { id: "services",  label: "Services",   href: "/supplier/services", icon: Package,    badge: 5 },
-  { id: "bookings",  label: "Bookings",   href: "/supplier/bookings", icon: Calendar,   badge: 2 },
-  { id: "earnings",  label: "Earnings",   href: "/supplier/earnings", icon: TrendingUp },
-  { id: "reviews",   label: "Reviews",    href: "/supplier/reviews",  icon: Star,       badge: 2 },
-  { id: "profile",   label: "Profile",    href: "/supplier/profile",  icon: User },
+  { id: "overview",      label: "Overview",      href: "/supplier",                  icon: LayoutDashboard },
+  { id: "services",      label: "Services",      href: "/supplier/services",         icon: Package,    badge: 5 },
+  { id: "bookings",      label: "Bookings",      href: "/supplier/bookings",         icon: Calendar,   badge: 2 },
+  { id: "availability",  label: "Availability",  href: "/supplier/availability",     icon: CalendarDays },
+  { id: "earnings",      label: "Earnings",      href: "/supplier/earnings",         icon: TrendingUp },
+  { id: "reviews",       label: "Reviews",       href: "/supplier/reviews",          icon: Star,       badge: 2 },
+  { id: "profile",       label: "Profile",       href: "/supplier/profile",          icon: User },
 ];
 
 const NAV_BOTTOM: NavItem[] = [

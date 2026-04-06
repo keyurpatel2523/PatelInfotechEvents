@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import * as PopoverPrimitive from "@radix-ui/react-popover";
 import { Button } from "@/components/ui/button";
+import { BookingDatePicker } from "@/components/service-detail/booking-date-picker";
 import { cn } from "@/lib/utils";
 import { CURRENCY_SYMBOL } from "@/lib/constants";
 import type { PackageOption } from "@/lib/mock-service-details";
@@ -102,6 +103,7 @@ export function BookingCard({
   packages,
   responseTime,
   instantBook,
+  supplierId,
 }: BookingCardProps) {
   const [selectedId, setSelectedId] = React.useState(
     packages.find((p) => p.popular)?.id ?? packages[0]?.id
@@ -238,28 +240,23 @@ export function BookingCard({
                 sideOffset={6}
                 align="start"
                 className={cn(
-                  "z-50 w-80 rounded-2xl border border-[--border] bg-[--bg] shadow-[var(--shadow-xl)] p-5",
+                  "z-50 w-[320px] rounded-2xl border border-[--border] bg-[--bg] shadow-[var(--shadow-xl)] p-4",
                   "data-[state=open]:animate-in data-[state=closed]:animate-out",
                   "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
                   "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
                   "origin-top-left duration-150"
                 )}
               >
-                <p className="text-sm font-semibold text-[--text-1] mb-4">When is your event?</p>
-                <input
-                  type="date"
-                  value={date}
-                  min={new Date().toISOString().split("T")[0]}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="w-full rounded-xl border border-[--border] bg-[--bg-subtle] px-4 py-3 text-sm text-[--text-1] focus:outline-none focus:ring-2 focus:ring-[#6366f1] transition-shadow"
+                <p className="text-sm font-semibold text-[--text-1] mb-3">When is your event?</p>
+                <BookingDatePicker
+                  supplierId={supplierId}
+                  selectedDate={date}
+                  onDateChange={setDate}
                 />
-                <p className="mt-3 text-xs text-[--text-4]">
-                  Minimum booking notice: 4 weeks in advance
-                </p>
                 {date && (
                   <button
                     onClick={() => setDate("")}
-                    className="mt-3 text-xs text-[#6366f1] hover:underline"
+                    className="mt-2 text-xs text-[#6366f1] hover:underline"
                   >
                     Clear date
                   </button>
