@@ -12,17 +12,18 @@ import {
   type SortingState,
   type ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronUp, ChevronDown, ChevronsUpDown, ChevronLeft, ChevronRight, Inbox } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /* ─── Props ──────────────────────────────────────────────────── */
 interface DataTableProps<T> {
-  columns:     ColumnDef<T>[];
-  data:        T[];
-  pageSize?:   number;
+  columns:      ColumnDef<T>[];
+  data:         T[];
+  pageSize?:    number;
   searchValue?: string;
   searchKey?:   string;
-  emptyLabel?: string;
+  emptyLabel?:  string;
+  emptySubLabel?: string;
 }
 
 /* ─── Sort icon ──────────────────────────────────────────────── */
@@ -40,6 +41,7 @@ export function DataTable<T>({
   searchValue = "",
   searchKey,
   emptyLabel = "No results found",
+  emptySubLabel = "Try adjusting your filters or search terms.",
 }: DataTableProps<T>) {
   const [sorting,       setSorting]       = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -74,9 +76,9 @@ export function DataTable<T>({
   const totalFiltered = table.getFilteredRowModel().rows.length;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-3">
       {/* Table */}
-      <div className="overflow-x-auto rounded-2xl border border-[--border]">
+      <div className="overflow-x-auto rounded-2xl border border-[--border] shadow-[var(--shadow-sm)]">
         <table className="w-full text-sm">
           <thead>
             {table.getHeaderGroups().map((hg) => (
@@ -89,7 +91,7 @@ export function DataTable<T>({
                       scope="col"
                       onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                       className={cn(
-                        "px-4 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-[--text-3] whitespace-nowrap",
+                        "px-5 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[--text-2] whitespace-nowrap",
                         canSort && "cursor-pointer select-none hover:text-[--text-1] transition-colors",
                       )}
                     >
@@ -107,21 +109,26 @@ export function DataTable<T>({
           <tbody className="divide-y divide-[--border-subtle]">
             {rows.length === 0 ? (
               <tr>
-                <td
-                  colSpan={columns.length}
-                  className="px-4 py-16 text-center text-sm text-[--text-4]"
-                >
-                  {emptyLabel}
+                <td colSpan={columns.length} className="px-5 py-20 text-center">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="h-12 w-12 rounded-2xl bg-[--bg-muted] flex items-center justify-center">
+                      <Inbox className="h-6 w-6 text-[--text-4]" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-[--text-2]">{emptyLabel}</p>
+                      <p className="text-xs text-[--text-4] mt-0.5">{emptySubLabel}</p>
+                    </div>
+                  </div>
                 </td>
               </tr>
             ) : (
               rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="hover:bg-[--bg-subtle] transition-colors"
+                  className="hover:bg-[--bg-subtle] transition-colors group"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td key={cell.id} className="px-4 py-3 whitespace-nowrap">
+                    <td key={cell.id} className="px-5 py-4 whitespace-nowrap">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
@@ -134,15 +141,15 @@ export function DataTable<T>({
 
       {/* Pagination */}
       {pageCount > 1 && (
-        <div className="flex items-center justify-between px-1 text-xs text-[--text-3]">
-          <span>
-            {pageIndex * pageSize + 1}–{Math.min((pageIndex + 1) * pageSize, totalFiltered)} of {totalFiltered}
+        <div className="flex items-center justify-between px-1">
+          <span className="text-xs text-[--text-3]">
+            Showing <span className="font-semibold text-[--text-1]">{pageIndex * pageSize + 1}–{Math.min((pageIndex + 1) * pageSize, totalFiltered)}</span> of <span className="font-semibold text-[--text-1]">{totalFiltered}</span>
           </span>
           <div className="flex items-center gap-1">
             <button
               onClick={() => table.previousPage()}
               disabled={!table.getCanPreviousPage()}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[--border] hover:border-[--text-4] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[--border] bg-[--bg] hover:border-[--text-4] hover:bg-[--bg-subtle] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
@@ -151,10 +158,10 @@ export function DataTable<T>({
                 key={i}
                 onClick={() => table.setPageIndex(i)}
                 className={cn(
-                  "h-7 w-7 rounded-lg text-xs font-medium transition-all",
+                  "h-8 w-8 rounded-lg text-xs font-semibold transition-all",
                   i === pageIndex
-                    ? "bg-[#6366f1] text-white"
-                    : "border border-[--border] hover:border-[--text-4] text-[--text-2]",
+                    ? "bg-[#6366f1] text-white shadow-sm"
+                    : "border border-[--border] bg-[--bg] hover:border-[--text-4] hover:bg-[--bg-subtle] text-[--text-2]",
                 )}
               >
                 {i + 1}
@@ -163,7 +170,7 @@ export function DataTable<T>({
             <button
               onClick={() => table.nextPage()}
               disabled={!table.getCanNextPage()}
-              className="flex h-7 w-7 items-center justify-center rounded-lg border border-[--border] hover:border-[--text-4] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-[--border] bg-[--bg] hover:border-[--text-4] hover:bg-[--bg-subtle] disabled:opacity-30 disabled:cursor-not-allowed transition-all"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>

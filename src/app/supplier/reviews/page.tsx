@@ -202,7 +202,7 @@ export default function ReviewsPage() {
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-xl font-bold text-[--text-1]">Reviews</h1>
-            <p className="text-sm text-[--text-3] mt-0.5">
+            <p className="text-sm text-[--text-3] mt-1">
               {reviews.length} total · {unreplied} awaiting reply
             </p>
           </div>
@@ -268,11 +268,23 @@ export default function ReviewsPage() {
           </AnimatePresence>
 
           {filtered.length === 0 && (
-            <div className="flex flex-col items-center py-16 text-center">
-              <Star className="h-10 w-10 text-[--text-4] mb-4" />
-              <h3 className="text-base font-bold text-[--text-1]">No reviews yet</h3>
-              <p className="text-sm text-[--text-3] mt-1">Reviews will appear here once customers leave them.</p>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center py-24 text-center"
+            >
+              <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950 dark:to-yellow-950 flex items-center justify-center mb-5 shadow-inner">
+                <Star className="h-9 w-9 text-amber-400" />
+              </div>
+              <h3 className="text-lg font-bold text-[--text-1] mb-2">
+                {filter === "all" ? "No reviews yet" : `No ${filter}-star reviews`}
+              </h3>
+              <p className="text-sm text-[--text-3] max-w-xs">
+                {filter === "all"
+                  ? "Reviews from clients will appear here after completed bookings."
+                  : "Try selecting a different star rating to see more reviews."}
+              </p>
+            </motion.div>
           )}
         </div>
 

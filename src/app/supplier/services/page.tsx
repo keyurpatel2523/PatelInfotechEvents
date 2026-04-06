@@ -270,11 +270,9 @@ export default function ServicesPage() {
       <main className="flex-1 overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-6 max-w-6xl">
 
         {/* ── Page heading ─────────────────────────────────── */}
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <h1 className="text-xl font-bold text-[--text-1]">My Services</h1>
-            <p className="text-sm text-[--text-3] mt-0.5">{services.length} services listed</p>
-          </div>
+        <div>
+          <h1 className="text-xl font-bold text-[--text-1]">My Services</h1>
+          <p className="text-sm text-[--text-3] mt-1">{services.length} service{services.length !== 1 ? "s" : ""} listed</p>
         </div>
 
         {/* ── Tabs ─────────────────────────────────────────── */}
@@ -324,21 +322,29 @@ export default function ServicesPage() {
             {/* Empty state */}
             {filtered.length === 0 && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="col-span-full flex flex-col items-center justify-center py-20 text-center"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="col-span-full flex flex-col items-center justify-center py-24 text-center"
               >
-                <div className="h-14 w-14 rounded-2xl bg-[--bg-muted] flex items-center justify-center mb-4">
-                  <Package className="h-7 w-7 text-[--text-4]" />
+                <div className="h-20 w-20 rounded-3xl bg-gradient-to-br from-[#eef2ff] to-[#f5f3ff] dark:from-[#1e1b4b] dark:to-[#2e1065] flex items-center justify-center mb-5 shadow-inner">
+                  <Package className="h-9 w-9 text-[#6366f1]" />
                 </div>
-                <h3 className="text-base font-bold text-[--text-1] mb-1">No services yet</h3>
-                <p className="text-sm text-[--text-3] mb-6">Create your first service to start receiving bookings.</p>
-                <button
-                  onClick={() => { setEditTarget(null); setFormOpen(true); }}
-                  className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-5 py-2.5 text-sm font-bold text-white shadow-sm"
-                >
-                  <Plus className="h-4 w-4" /> Add your first service
-                </button>
+                <h3 className="text-lg font-bold text-[--text-1] mb-2">
+                  {tab === "all" ? "No services listed yet" : `No ${tab} services`}
+                </h3>
+                <p className="text-sm text-[--text-3] mb-7 max-w-xs">
+                  {tab === "all"
+                    ? "List your first service to start receiving bookings from clients."
+                    : `You don't have any ${tab} services right now.`}
+                </p>
+                {tab === "all" && (
+                  <button
+                    onClick={() => { setEditTarget(null); setFormOpen(true); }}
+                    className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#6366f1] to-[#8b5cf6] px-6 py-3 text-sm font-bold text-white shadow-md hover:opacity-90 transition-opacity active:scale-95"
+                  >
+                    <Plus className="h-4 w-4" /> Add your first service
+                  </button>
+                )}
               </motion.div>
             )}
           </motion.div>

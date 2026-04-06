@@ -7,11 +7,11 @@ import {
   TrendingUp, Calendar, Clock, Star,
   ArrowRight, Plus, CheckCircle2,
 } from "lucide-react";
-import { SupplierHeader } from "@/components/supplier/supplier-header";
-import { StatusBadge }    from "@/components/supplier/status-badge";
-import { formatCurrency } from "@/lib/constants";
+import { SupplierHeader }   from "@/components/supplier/supplier-header";
+import { StatusBadge }      from "@/components/supplier/status-badge";
+import { formatCurrency }   from "@/lib/constants";
+import { useBookingsStore } from "@/store/bookings";
 import {
-  SUPPLIER_BOOKINGS,
   SUPPLIER_SERVICES,
   MONTHLY_EARNINGS,
 } from "@/lib/mock-supplier";
@@ -56,13 +56,13 @@ function StatCard({
       transition={{ delay: index * 0.07, duration: 0.38, ease: EASE }}
       className="rounded-2xl border border-[--border] bg-[--bg] p-5 shadow-[var(--shadow-sm)] flex items-start gap-4"
     >
-      <div className={`h-10 w-10 shrink-0 rounded-xl flex items-center justify-center ${iconBg}`}>
+      <div className={`h-11 w-11 shrink-0 rounded-xl flex items-center justify-center ${iconBg}`}>
         <Icon className={`h-5 w-5 ${iconColor}`} />
       </div>
       <div className="min-w-0">
-        <p className="text-xs font-medium text-[--text-3] mb-0.5">{label}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-[--text-3] mb-1">{label}</p>
         <p className="text-2xl font-bold text-[--text-1] tabular-nums leading-none">{value}</p>
-        <p className="text-xs text-[--text-4] mt-1">{sub}</p>
+        <p className="text-xs text-[--text-4] mt-1.5">{sub}</p>
       </div>
     </motion.div>
   );
@@ -91,15 +91,18 @@ function QuickAction({ href, icon: Icon, label, sub, iconBg, iconColor }: {
 
 /* ─── Page ───────────────────────────────────────────────────── */
 export default function SupplierOverviewPage() {
-  const currentMonth = MONTHLY_EARNINGS[MONTHLY_EARNINGS.length - 1];
-  const prevMonth    = MONTHLY_EARNINGS[MONTHLY_EARNINGS.length - 2];
-  const pendingBookings = SUPPLIER_BOOKINGS.filter((b) => b.status === "pending").length;
+  /* Live bookings from the shared Zustand store (populated by Firestore listener) */
+  const bookings = useBookingsStore((s) => s.bookings);
+
+  const currentMonth    = MONTHLY_EARNINGS[MONTHLY_EARNINGS.length - 1];
+  const prevMonth       = MONTHLY_EARNINGS[MONTHLY_EARNINGS.length - 2];
+  const pendingBookings = bookings.filter((b) => b.status === "pending").length;
   const avgRating = (
     SUPPLIER_SERVICES.reduce((s, sv) => s + sv.rating * sv.reviewCount, 0) /
     Math.max(1, SUPPLIER_SERVICES.reduce((s, sv) => s + sv.reviewCount, 0))
   ).toFixed(1);
 
-  const recentBookings = SUPPLIER_BOOKINGS.slice(0, 5);
+  const recentBookings = bookings.slice(0, 5);
 
   return (
     <div className="flex flex-col min-h-full">
@@ -114,7 +117,7 @@ export default function SupplierOverviewPage() {
         }
       />
 
-      <main className="flex-1 overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-7 max-w-6xl">
+      <main className="flex-1 overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-8 max-w-6xl">
 
         {/* ── Greeting ─────────────────────────────────────── */}
         <motion.div
@@ -123,7 +126,7 @@ export default function SupplierOverviewPage() {
           transition={{ duration: 0.32 }}
         >
           <h1 className="text-2xl font-bold text-[--text-1]">Good morning, James 👋</h1>
-          <p className="text-sm text-[--text-3] mt-0.5">
+          <p className="text-sm text-[--text-3] mt-1">
             Here&apos;s your supplier overview for {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}.
           </p>
         </motion.div>
@@ -142,7 +145,7 @@ export default function SupplierOverviewPage() {
           <StatCard
             index={1}
             label="Total Bookings"
-            value={String(SUPPLIER_BOOKINGS.length)}
+            value={String(bookings.length)}
             sub={`${pendingBookings} pending action`}
             icon={Calendar}
             iconBg="bg-[#f5f3ff] dark:bg-[#2e1065]"
@@ -181,7 +184,7 @@ export default function SupplierOverviewPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-[--border]">
               <div>
                 <h2 className="text-sm font-bold text-[--text-1]">Recent Bookings</h2>
-                <p className="text-xs text-[--text-3] mt-0.5">{SUPPLIER_BOOKINGS.length} total</p>
+                <p className="text-xs text-[--text-3] mt-0.5">{bookings.length} total</p>
               </div>
               <Link
                 href="/supplier/bookings"
@@ -193,19 +196,19 @@ export default function SupplierOverviewPage() {
 
             <div className="divide-y divide-[--border-subtle]">
               {recentBookings.map((b) => (
-                <div key={b.id} className="flex items-center gap-3 px-5 py-3 hover:bg-[--bg-subtle] transition-colors">
+                <div key={b.id} className="flex items-center gap-3.5 px-5 py-3.5 hover:bg-[--bg-subtle] transition-colors">
                   <div
-                    className="h-8 w-8 shrink-0 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                    className="h-9 w-9 shrink-0 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
                     style={{ background: b.customerColor }}
                   >
                     {b.customerInitials}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-[--text-1] truncate">{b.customer}</p>
-                    <p className="text-xs text-[--text-3] truncate">{b.service}</p>
+                    <p className="text-xs text-[--text-4] truncate mt-0.5">{b.service}</p>
                   </div>
-                  <div className="text-right shrink-0 space-y-0.5">
-                    <p className="text-xs font-bold tabular-nums text-[--text-1]">
+                  <div className="text-right shrink-0 space-y-1">
+                    <p className="text-sm font-bold tabular-nums text-[--text-1]">
                       {formatCurrency(b.amount)}
                     </p>
                     <StatusBadge status={b.status} />

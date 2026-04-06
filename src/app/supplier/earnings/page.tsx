@@ -89,13 +89,13 @@ export default function EarningsPage() {
         }
       />
 
-      <main className="flex-1 overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-7 max-w-4xl">
+      <main className="flex-1 overflow-y-auto p-5 sm:p-6 lg:p-8 space-y-8 max-w-4xl">
 
         {/* ── Heading ──────────────────────────────────────── */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
             <h1 className="text-xl font-bold text-[--text-1]">Earnings</h1>
-            <p className="text-sm text-[--text-3] mt-0.5">Last 7 months · Mayfair Catering Co.</p>
+            <p className="text-sm text-[--text-3] mt-1">Last 7 months · Mayfair Catering Co.</p>
           </div>
           <div className="flex items-center gap-1.5 rounded-xl border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950 px-3 py-1.5">
             <TrendingUp className="h-3.5 w-3.5 text-green-600" />
@@ -118,9 +118,9 @@ export default function EarningsPage() {
               transition={{ delay: i * 0.07, duration: 0.35, ease: EASE }}
               className="rounded-2xl border border-[--border] bg-[--bg] p-5 shadow-[var(--shadow-sm)]"
             >
-              <p className="text-xs font-medium text-[--text-3] mb-1">{card.label}</p>
-              <p className={`text-xl font-bold tabular-nums ${card.color}`}>{card.value}</p>
-              <p className="text-xs text-[--text-4] mt-1">{card.sub}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-[--text-3] mb-2">{card.label}</p>
+              <p className={`text-2xl font-bold tabular-nums leading-none ${card.color}`}>{card.value}</p>
+              <p className="text-xs text-[--text-4] mt-1.5">{card.sub}</p>
             </motion.div>
           ))}
         </div>
@@ -166,7 +166,7 @@ export default function EarningsPage() {
               <thead>
                 <tr className="border-b border-[--border] bg-[--bg-subtle]">
                   {["Month", "Bookings", "Gross Revenue", "Platform Fee (12%)", "Net Payout"].map((h) => (
-                    <th key={h} className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-[--text-3]">
+                    <th key={h} className="px-5 py-3.5 text-left text-xs font-bold uppercase tracking-wider text-[--text-2]">
                       {h}
                     </th>
                   ))}
@@ -178,15 +178,15 @@ export default function EarningsPage() {
                   const isLatest = i === 0;
                   return (
                     <tr key={m.month} className={`hover:bg-[--bg-subtle] transition-colors ${isLatest ? "font-semibold" : ""}`}>
-                      <td className="px-5 py-3">
+                      <td className="px-5 py-4">
                         <span className={`text-sm ${isLatest ? "text-[#6366f1] font-bold" : "text-[--text-1]"}`}>
                           {m.month} {isLatest && <span className="text-[10px] ml-1 opacity-70">(current)</span>}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-[--text-2] tabular-nums">{m.bookings}</td>
-                      <td className="px-5 py-3 text-[--text-1] tabular-nums font-medium">{formatCurrency(m.revenue)}</td>
-                      <td className="px-5 py-3 text-red-500 tabular-nums">−{formatCurrency(fee)}</td>
-                      <td className="px-5 py-3 text-green-600 tabular-nums font-bold">{formatCurrency(m.payout)}</td>
+                      <td className="px-5 py-4 text-[--text-2] tabular-nums">{m.bookings}</td>
+                      <td className="px-5 py-4 text-[--text-1] tabular-nums font-medium">{formatCurrency(m.revenue)}</td>
+                      <td className="px-5 py-4 text-red-500 tabular-nums">−{formatCurrency(fee)}</td>
+                      <td className="px-5 py-4 text-green-600 tabular-nums font-bold">{formatCurrency(m.payout)}</td>
                     </tr>
                   );
                 })}
