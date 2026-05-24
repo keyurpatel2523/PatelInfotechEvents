@@ -285,8 +285,8 @@ export default function ProfilePage() {
                   className={cn(
                     "rounded-xl border px-3.5 py-2 text-sm font-medium transition-all",
                     active
-                      ? "border-[#6366f1] bg-[#eef2ff] text-[#4f46e5] dark:bg-[#1e1b4b]"
-                      : "border-[--border] text-[--text-2] hover:border-[--text-3]",
+                      ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
+                      : "border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900 bg-white",
                   )}
                 >
                   {cat}
@@ -309,8 +309,8 @@ export default function ProfilePage() {
                   className={cn(
                     "flex items-center gap-1.5 rounded-xl border px-3.5 py-2 text-sm font-medium transition-all",
                     active
-                      ? "border-[#6366f1] bg-[#eef2ff] text-[#4f46e5] dark:bg-[#1e1b4b]"
-                      : "border-[--border] text-[--text-2] hover:border-[--text-3]",
+                      ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
+                      : "border-gray-200 text-gray-600 hover:border-gray-400 hover:text-gray-900 bg-white",
                   )}
                 >
                   <MapPin className="h-3 w-3" />
@@ -328,7 +328,7 @@ export default function ProfilePage() {
               <select
                 value={form.responseTime}
                 onChange={(e) => patch("responseTime", e.target.value)}
-                className="w-full rounded-xl border border-[--border] bg-[--bg] px-3.5 py-2.5 text-sm text-[--text-1] focus:outline-none focus:ring-2 focus:ring-[#6366f1]/25 focus:border-[#6366f1] hover:border-[--text-4] transition-all cursor-pointer"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 hover:border-gray-400 transition-all cursor-pointer"
               >
                 {["Within 1 hour", "Within 2 hours", "Within 4 hours", "Same day", "Within 24 hours"].map((v) => (
                   <option key={v}>{v}</option>
@@ -339,7 +339,7 @@ export default function ProfilePage() {
               <select
                 value={form.cancellation}
                 onChange={(e) => patch("cancellation", e.target.value)}
-                className="w-full rounded-xl border border-[--border] bg-[--bg] px-3.5 py-2.5 text-sm text-[--text-1] focus:outline-none focus:ring-2 focus:ring-[#6366f1]/25 focus:border-[#6366f1] hover:border-[--text-4] transition-all cursor-pointer"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/25 focus:border-indigo-500 hover:border-gray-400 transition-all cursor-pointer"
               >
                 {[
                   "Full refund up to 7 days before event",

@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 import { DEMO_USERS } from "./demo-users";
 import type { UserProfile } from "@/types/auth";
 
@@ -38,25 +39,26 @@ async function firebaseSignIn(
   email: string,
   password: string,
 ): Promise<UserProfile> {
-  const { clientDb } = await import("@/lib/firebase-client");
+  const { clientApp, clientDb } = await import("@/lib/firebase-client");
   const { getAuth, signInWithEmailAndPassword } = await import("firebase/auth");
   const { doc, getDoc } = await import("firebase/firestore");
 
-  const auth = getAuth();
+  if (!clientApp) throw new Error("Firebase not configured.");
+  const auth = getAuth(clientApp);
   const credential = await signInWithEmailAndPassword(auth, email, password);
   const uid = credential.user.uid;
 
   if (!clientDb) throw new Error("Firestore not configured.");
-  const snap = await getDoc(doc(clientDb, "users", uid));
+  const snap = await getDoc(doc(clientDb, CollectionName.USERS, uid));
   if (!snap.exists()) throw new Error("User profile not found.");
 
   return snap.data() as UserProfile;
 }
 
 export async function signOut(): Promise<void> {
-  const { isClientFirebaseConfigured } = await import("@/lib/firebase-client");
-  if (!isClientFirebaseConfigured) return; // demo mode — nothing to sign out from Firebase
+  const { isClientFirebaseConfigured, clientApp } = await import("@/lib/firebase-client");
+  if (!isClientFirebaseConfigured || !clientApp) return;
 
   const { getAuth, signOut: fbSignOut } = await import("firebase/auth");
-  await fbSignOut(getAuth());
+  await fbSignOut(getAuth(clientApp));
 }

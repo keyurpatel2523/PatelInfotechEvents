@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "@/lib/firebase";
@@ -26,8 +27,8 @@ export async function POST(req: NextRequest) {
        *
        * This is the only safe way to prevent double bookings under concurrent requests.
        */
-      const availRef  = db.collection("availability").doc(body.supplierId);
-      const bookingRef = db.collection("bookings").doc(bookingId);
+      const availRef  = db.collection(CollectionName.AVAILABILITY).doc(body.supplierId);
+      const bookingRef = db.collection(CollectionName.BOOKINGS).doc(bookingId);
 
       await db.runTransaction(async (tx) => {
         const availSnap = await tx.get(availRef);

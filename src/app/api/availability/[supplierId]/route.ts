@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 /**
  * GET  /api/availability/[supplierId]
  *   Returns the supplier's full availability record.
@@ -17,7 +18,7 @@ import {
   deserializeAvailability,
 } from "@/lib/availability-firestore";
 
-const COL = "availability";
+const COL = CollectionName.AVAILABILITY;
 
 /* ── GET ─────────────────────────────────────────────────────── */
 export async function GET(

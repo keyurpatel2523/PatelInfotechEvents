@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 /**
  * PATCH /api/categories/[id]
  *   Body variants:
@@ -14,7 +15,7 @@ import { FieldValue }    from "firebase-admin/firestore";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { slugify }       from "@/lib/categories-firestore";
 
-const COL = "categories";
+const COL = CollectionName.CATEGORIES;
 
 /* ── PATCH ───────────────────────────────────────────────────── */
 export async function PATCH(

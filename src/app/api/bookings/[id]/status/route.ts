@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 import type { BookingStatus } from "@/lib/mock-supplier";
@@ -24,7 +25,7 @@ export async function PATCH(
     }
 
     if (db) {
-      const ref  = db.collection("bookings").doc(id);
+      const ref  = db.collection(CollectionName.BOOKINGS).doc(id);
       const snap = await ref.get();
 
       if (!snap.exists) {

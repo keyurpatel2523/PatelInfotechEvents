@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 /**
  * Server-only notification helpers (Firebase Admin SDK).
  * Import ONLY from API routes and server actions.
@@ -13,7 +14,7 @@ import {
 
 export async function createNotification(payload: CreateNotificationPayload): Promise<void> {
   if (!db) return;
-  await db.collection("notifications").add({
+  await db.collection(CollectionName.NOTIFICATIONS).add({
     ...payload,
     read:      false,
     createdAt: new Date().toISOString(),
@@ -82,7 +83,7 @@ export async function createPaymentNotifications(
 ): Promise<void> {
   if (!db) return;
 
-  const snap = await db.collection("bookings").doc(bookingId).get();
+  const snap = await db.collection(CollectionName.BOOKINGS).doc(bookingId).get();
   if (!snap.exists) return;
 
   const booking = snap.data() as {

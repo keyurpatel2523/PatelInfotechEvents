@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 /**
  * POST /api/availability/[supplierId]/check
  *
@@ -16,7 +17,7 @@ import { NextResponse } from "next/server";
 import { db, isFirebaseConfigured } from "@/lib/firebase";
 import { deserializeAvailability, emptyRecord } from "@/lib/availability-firestore";
 
-const COL = "availability";
+const COL = CollectionName.AVAILABILITY;
 
 export async function POST(
   req: Request,

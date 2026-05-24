@@ -1,4 +1,5 @@
 "use client";
+import { CollectionName } from "@/lib/firebase/collections";
 
 /**
  * Subscribes to the authenticated user's conversations in Firestore
@@ -37,7 +38,7 @@ export function useConversationsListener(userId: string) {
     setConnection("connecting");
 
     const q = query(
-      collection(clientDb, "conversations"),
+      collection(clientDb, CollectionName.CONVERSATIONS),
       where("participants", "array-contains", userId),
       orderBy("lastMessageAt", "desc"),
     );

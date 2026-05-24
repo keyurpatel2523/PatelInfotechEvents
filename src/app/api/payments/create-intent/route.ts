@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 import { NextRequest, NextResponse } from "next/server";
 import { stripe, isStripeConfigured } from "@/lib/stripe";
 import { db } from "@/lib/firebase";
@@ -30,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     /* Update Firestore booking with payment intent ID */
     if (db) {
-      await db.collection("bookings").doc(bookingId).update({
+      await db.collection(CollectionName.BOOKINGS).doc(bookingId).update({
         paymentIntentId: paymentIntent.id,
         updatedAt:       new Date().toISOString(),
       });

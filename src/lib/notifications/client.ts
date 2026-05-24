@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 import type { AppNotification } from "@/types/notification";
 
 export function deserializeNotification(
@@ -27,7 +28,7 @@ export async function markNotificationRead(notificationId: string): Promise<void
   const { clientDb }   = await import("@/lib/firebase-client");
   const { doc, updateDoc } = await import("firebase/firestore");
   if (!clientDb) return;
-  await updateDoc(doc(clientDb, "notifications", notificationId), { read: true });
+  await updateDoc(doc(clientDb, CollectionName.NOTIFICATIONS, notificationId), { read: true });
 }
 
 export async function markAllNotificationsRead(userId: string): Promise<void> {
@@ -36,7 +37,7 @@ export async function markAllNotificationsRead(userId: string): Promise<void> {
   if (!clientDb) return;
 
   const q     = query(
-    collection(clientDb, "notifications"),
+    collection(clientDb, CollectionName.NOTIFICATIONS),
     where("userId", "==", userId),
     where("read",   "==", false),
   );

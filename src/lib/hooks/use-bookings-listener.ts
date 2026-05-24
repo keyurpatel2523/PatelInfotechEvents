@@ -1,4 +1,5 @@
 "use client";
+import { CollectionName } from "@/lib/firebase/collections";
 
 /**
  * Subscribes to the Firestore "bookings" collection and pushes updates into
@@ -35,7 +36,7 @@ export function useBookingsListener() {
     setConnection("connecting");
 
     const q = query(
-      collection(clientDb, "bookings"),
+      collection(clientDb, CollectionName.BOOKINGS),
       orderBy("createdAt", "desc"),
     );
 

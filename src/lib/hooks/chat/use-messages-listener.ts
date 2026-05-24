@@ -1,4 +1,5 @@
 "use client";
+import { CollectionName, SubCollectionName } from "@/lib/firebase/collections";
 
 /**
  * Subscribes to the messages subcollection for a given conversation,
@@ -27,7 +28,7 @@ export function useMessagesListener(conversationId: string | null) {
     if (!isClientFirebaseConfigured || !clientDb || !conversationId) return;
 
     const q = query(
-      collection(clientDb, "conversations", conversationId, "messages"),
+      collection(clientDb, CollectionName.CONVERSATIONS, conversationId, SubCollectionName.MESSAGES),
       orderBy("createdAt", "asc"),
     );
 

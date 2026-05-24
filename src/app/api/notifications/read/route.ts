@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/firebase";
 
@@ -19,7 +20,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const snap = await db
-      .collection("notifications")
+      .collection(CollectionName.NOTIFICATIONS)
       .where("userId", "==", userId)
       .where("read",   "==", false)
       .get();

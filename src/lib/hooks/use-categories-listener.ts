@@ -1,4 +1,5 @@
 "use client";
+import { CollectionName } from "@/lib/firebase/collections";
 
 /**
  * Subscribes to the Firestore "categories" collection and returns live data.
@@ -42,7 +43,7 @@ export function useCategoriesListener(fallback: AdminCategory[]): {
 
     /* Order by level then order so the snapshot reflects tree depth correctly */
     const q = query(
-      collection(clientDb, "categories"),
+      collection(clientDb, CollectionName.CATEGORIES),
       orderBy("level",  "asc"),
       orderBy("order",  "asc"),
     );

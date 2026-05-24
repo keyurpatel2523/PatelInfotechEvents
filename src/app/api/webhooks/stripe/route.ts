@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 /**
  * Stripe webhook handler.
  *
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
         const pi        = event.data.object as Stripe.PaymentIntent;
         const bookingId = pi.metadata?.bookingId;
         if (bookingId && db) {
-          await db.collection("bookings").doc(bookingId).update({
+          await db.collection(CollectionName.BOOKINGS).doc(bookingId).update({
             status:          "confirmed",
             paymentStatus:   "paid",
             paymentIntentId: pi.id,
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
         const pi        = event.data.object as Stripe.PaymentIntent;
         const bookingId = pi.metadata?.bookingId;
         if (bookingId && db) {
-          await db.collection("bookings").doc(bookingId).update({
+          await db.collection(CollectionName.BOOKINGS).doc(bookingId).update({
             status:    "cancelled",
             updatedAt: new Date().toISOString(),
           });

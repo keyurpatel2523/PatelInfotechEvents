@@ -1,4 +1,5 @@
 "use client";
+import { CollectionName } from "@/lib/firebase/collections";
 
 import * as React from "react";
 import { useNotificationsStore } from "@/store/notifications";
@@ -20,7 +21,7 @@ export function useNotificationsListener(userId: string | null) {
       if (!clientDb) return;
 
       const q = query(
-        collection(clientDb, "notifications"),
+        collection(clientDb, CollectionName.NOTIFICATIONS),
         where("userId", "==", userId),
         orderBy("createdAt", "desc"),
         limit(50),

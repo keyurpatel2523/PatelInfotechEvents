@@ -43,4 +43,4 @@ if (isClientFirebaseConfigured) {
   }
 }
 
-export { clientDb };
+export { clientApp, clientDb };

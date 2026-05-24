@@ -1,4 +1,5 @@
 "use client";
+import { CollectionName } from "@/lib/firebase/collections";
 
 /**
  * Real-time Firestore listener for a supplier's availability document.
@@ -35,7 +36,7 @@ export function useAvailabilityListener(supplierId: string): {
 
     setStatus("connecting");
 
-    const ref = doc(clientDb, "availability", supplierId);
+    const ref = doc(clientDb, CollectionName.AVAILABILITY, supplierId);
 
     const unsub = onSnapshot(
       ref,

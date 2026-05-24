@@ -1,3 +1,4 @@
+import { CollectionName, SubCollectionName } from "@/lib/firebase/collections";
 /**
  * Firestore operations for the chat feature.
  * All imports from firebase/firestore are dynamic so this module is
@@ -70,7 +71,7 @@ export async function sendMessage(
   const batch = writeBatch(clientDb);
 
   /* Add message document */
-  const msgRef = doc(collection(clientDb, "conversations", conversationId, "messages"));
+  const msgRef = doc(collection(clientDb, CollectionName.CONVERSATIONS, conversationId, SubCollectionName.MESSAGES));
   batch.set(msgRef, {
     senderId,
     senderName,
@@ -81,7 +82,7 @@ export async function sendMessage(
   });
 
   /* Update parent conversation */
-  const convRef = doc(clientDb, "conversations", conversationId);
+  const convRef = doc(clientDb, CollectionName.CONVERSATIONS, conversationId);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const update: Record<string, any> = {
     lastMessage:   text.trim(),
@@ -106,7 +107,7 @@ export async function markConversationRead(
   if (!isClientFirebaseConfigured || !clientDb) return;
 
   const { doc, updateDoc } = await import("firebase/firestore");
-  await updateDoc(doc(clientDb, "conversations", conversationId), {
+  await updateDoc(doc(clientDb, CollectionName.CONVERSATIONS, conversationId), {
     [`unreadCount.${userId}`]: 0,
   });
 }
@@ -123,7 +124,7 @@ export async function createConversation(
 
   const { collection, addDoc, serverTimestamp } = await import("firebase/firestore");
 
-  const ref = await addDoc(collection(clientDb, "conversations"), {
+  const ref = await addDoc(collection(clientDb, CollectionName.CONVERSATIONS), {
     participants:        participantIds,
     participantNames,
     participantInitials: Object.fromEntries(

@@ -3,7 +3,7 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import { format, parseISO } from "date-fns";
-import { Search, Filter, CheckCircle2, XCircle, Ban, Eye, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { Search, CheckCircle2, XCircle, Ban, Eye, ChevronUp, ChevronDown, ChevronsUpDown, UserPlus, X, Loader2 } from "lucide-react";
 import { useAdminStore } from "@/store/admin";
 import { AdminStatusBadge } from "@/components/admin/admin-status-badge";
 import { AdminConfirmDialog } from "@/components/admin/admin-confirm-dialog";
@@ -47,15 +47,240 @@ interface ConfirmState {
   action: "approve" | "reject" | "suspend";
 }
 
+interface AddSupplierForm {
+  ownerName:   string;
+  companyName: string;
+  email:       string;
+  password:    string;
+  location:    string;
+  category:    string;
+}
+
+const EMPTY_FORM: AddSupplierForm = {
+  ownerName: "", companyName: "", email: "", password: "", location: "", category: "",
+};
+
+const CATEGORY_OPTIONS = [
+  "Catering", "Photography", "DJ & Music", "Venues", "Décor & Floral",
+  "Wedding", "AV & Lighting", "Kids & Family",
+];
+
+/* ── Add Supplier Modal ───────────────────────────────────── */
+function AddSupplierModal({
+  open, onClose, onCreated,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onCreated: (supplier: AdminSupplier) => void;
+}) {
+  const [form,    setForm]    = React.useState<AddSupplierForm>(EMPTY_FORM);
+  const [loading, setLoading] = React.useState(false);
+  const [error,   setError]   = React.useState<string | null>(null);
+
+  function patch(k: keyof AddSupplierForm, v: string) {
+    setForm((p) => ({ ...p, [k]: v }));
+    setError(null);
+  }
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!form.ownerName || !form.companyName || !form.email || !form.password) {
+      setError("Please fill in all required fields.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/admin/create-user", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email:       form.email.trim(),
+          password:    form.password,
+          displayName: form.ownerName.trim(),
+          role:        "supplier",
+          companyName: form.companyName.trim(),
+          approved:    true,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Failed to create supplier");
+
+      /* Build a local AdminSupplier row so the table updates immediately */
+      const newSupplier: AdminSupplier = {
+        id:            json.uid,
+        businessName:  form.companyName.trim(),
+        ownerName:     form.ownerName.trim(),
+        email:         form.email.trim(),
+        phone:         "—",
+        location:      form.location.trim() || "London, UK",
+        categories:    form.category ? [form.category] : ["General"],
+        status:        "approved",
+        joinedAt:      new Date().toISOString().split("T")[0],
+        rating:        0,
+        reviewCount:   0,
+        serviceCount:  0,
+        bookingCount:  0,
+        revenue:       0,
+        initials:      form.ownerName.trim().split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2),
+        avatarColor:   json.profile?.avatarColor ?? "#6366f1",
+      };
+      onCreated(newSupplier);
+      setForm(EMPTY_FORM);
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.18 }}
+        className="relative z-10 w-full max-w-md rounded-2xl bg-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">Add Supplier</h2>
+            <p className="text-xs text-gray-400 mt-0.5">Creates a Firebase account + supplier profile</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="h-7 w-7 flex items-center justify-center rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-700 transition-colors"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Owner name */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Owner Name <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              placeholder="e.g. Sophie Clarke"
+              value={form.ownerName}
+              onChange={(e) => patch("ownerName", e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
+            />
+          </div>
+
+          {/* Company name */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Business Name <span className="text-red-500">*</span></label>
+            <input
+              type="text"
+              placeholder="e.g. Golden Touch Events"
+              value={form.companyName}
+              onChange={(e) => patch("companyName", e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Email Address <span className="text-red-500">*</span></label>
+            <input
+              type="email"
+              placeholder="supplier@example.co.uk"
+              value={form.email}
+              onChange={(e) => patch("email", e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
+            />
+          </div>
+
+          {/* Password */}
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1">Temporary Password <span className="text-red-500">*</span></label>
+            <input
+              type="password"
+              placeholder="Min 8 characters"
+              value={form.password}
+              onChange={(e) => patch("password", e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
+            />
+          </div>
+
+          {/* Location + Category side by side */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Location</label>
+              <input
+                type="text"
+                placeholder="e.g. Shoreditch"
+                value={form.location}
+                onChange={(e) => patch("location", e.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+              <select
+                value={form.category}
+                onChange={(e) => patch("category", e.target.value)}
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
+              >
+                <option value="">Select…</option>
+                {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Error */}
+          {error && (
+            <p className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">{error}</p>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-2 pt-1">
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex-1 rounded-lg border border-gray-200 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-indigo-600 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60 transition-colors"
+            >
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
+              {loading ? "Creating…" : "Create Supplier"}
+            </button>
+          </div>
+        </form>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function SuppliersPage() {
   const { toast } = useAdminStore();
-  const [suppliers, setSuppliers] = React.useState<AdminSupplier[]>(ADMIN_SUPPLIERS);
-  const [tab,       setTab]       = React.useState<FilterTab>("all");
-  const [search,    setSearch]    = React.useState("");
-  const [sortField, setSortField] = React.useState<SortField | null>("joinedAt");
-  const [sortDir,   setSortDir]   = React.useState<SortDir>("desc");
-  const [confirm,   setConfirm]   = React.useState<ConfirmState | null>(null);
-  const [detailId,  setDetailId]  = React.useState<string | null>(null);
+  const [suppliers,   setSuppliers]   = React.useState<AdminSupplier[]>(ADMIN_SUPPLIERS);
+  const [tab,         setTab]         = React.useState<FilterTab>("all");
+  const [search,      setSearch]      = React.useState("");
+  const [sortField,   setSortField]   = React.useState<SortField | null>("joinedAt");
+  const [sortDir,     setSortDir]     = React.useState<SortDir>("desc");
+  const [confirm,     setConfirm]     = React.useState<ConfirmState | null>(null);
+  const [detailId,    setDetailId]    = React.useState<string | null>(null);
+  const [addOpen,     setAddOpen]     = React.useState(false);
+
+  function handleCreated(supplier: AdminSupplier) {
+    setSuppliers((prev) => [supplier, ...prev]);
+    toast("Supplier account created", "success");
+  }
 
   function handleSort(field: SortField) {
     if (sortField === field) setSortDir((d) => d === "asc" ? "desc" : "asc");
@@ -111,16 +336,26 @@ export default function SuppliersPage() {
             {pendingCount > 0 && <span className="ml-2 rounded-full bg-amber-100 text-amber-700 text-[11px] font-semibold px-2 py-0.5">{pendingCount} pending</span>}
           </p>
         </div>
-        {/* Search */}
-        <div className="relative w-64">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search suppliers…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-gray-200 bg-white pl-8 pr-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
-          />
+        <div className="flex items-center gap-2">
+          {/* Search */}
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search suppliers…"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 bg-white pl-8 pr-3 py-2 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/30 focus:border-indigo-400 transition-all"
+            />
+          </div>
+          {/* Add supplier */}
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shrink-0"
+          >
+            <UserPlus className="h-4 w-4" />
+            Add Supplier
+          </button>
         </div>
       </div>
 
@@ -323,6 +558,13 @@ export default function SuppliersPage() {
           </motion.div>
         </div>
       )}
+
+      {/* Add supplier modal */}
+      <AddSupplierModal
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        onCreated={handleCreated}
+      />
 
       {/* Confirm dialog */}
       <AdminConfirmDialog

@@ -1,3 +1,4 @@
+import { CollectionName } from "@/lib/firebase/collections";
 /**
  * GET  /api/categories — list all categories ordered by level → order
  * POST /api/categories — create a new category
@@ -17,7 +18,7 @@ import {
 } from "@/lib/categories-firestore";
 import type { AdminCategory } from "@/lib/mock-admin";
 
-const COL = "categories";
+const COL = CollectionName.CATEGORIES;
 
 /* ── GET ─────────────────────────────────────────────────────── */
 export async function GET() {
