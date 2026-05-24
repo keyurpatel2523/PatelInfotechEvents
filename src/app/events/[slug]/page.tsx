@@ -41,7 +41,7 @@ export default function EventDetailPage({ params }: { params: Promise<{ slug: st
   const related = MOCK_EVENTS.filter((e) => e.id !== event.id && e.category === event.category).slice(0, 3);
   const fillPercent = Math.round((event.attendees / event.capacity) * 100);
 
-  const formattedDate = new Date(event.date).toLocaleDateString("en-IN", {
+  const formattedDate = new Date(event.date).toLocaleDateString("en-GB", {
     weekday: "long", day: "numeric", month: "long", year: "numeric",
   });
 

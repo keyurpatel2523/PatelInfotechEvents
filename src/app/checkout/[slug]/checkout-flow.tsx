@@ -237,7 +237,7 @@ export default function CheckoutFlow({ service }: CheckoutFlowProps) {
   /* ── Step 4 is full-width ─────────────────────────────── */
   if (step === 4) {
     return (
-      <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+      <div className="pt-16" style={{ background: "var(--bg)" }}>
         {/* Top bar */}
         <div className="border-b border-[--border]">
           <div className="mx-auto max-w-2xl px-4 sm:px-6 py-5">
@@ -268,9 +268,9 @@ export default function CheckoutFlow({ service }: CheckoutFlowProps) {
 
   /* ── Steps 1-3: two-column layout ────────────────────── */
   return (
-    <div className="min-h-screen" style={{ background: "var(--bg)" }}>
+    <div className="pt-16" style={{ background: "var(--bg)" }}>
       {/* ── Top bar (step indicator) ─────────────────────── */}
-      <div className="sticky top-0 z-30 border-b border-[--border] bg-[--bg]/80 backdrop-blur-lg">
+      <div className="sticky top-16 z-30 border-b border-[--border] bg-[--bg]/80 backdrop-blur-lg">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4">
           <StepIndicator current={step} />
         </div>

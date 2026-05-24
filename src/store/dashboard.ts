@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type UserRole = "admin" | "supplier" | "customer";
+/* Re-export from canonical location — all existing imports still work */
+export type { UserRole } from "@/types/auth";
+import type { UserRole } from "@/types/auth";
+
 export type ThemeMode = "light" | "dark" | "system";
 
 interface DashboardState {
@@ -20,10 +23,6 @@ interface DashboardState {
   // Command palette
   commandOpen: boolean;
   setCommandOpen: (v: boolean) => void;
-
-  // Notifications panel
-  notifOpen: boolean;
-  setNotifOpen: (v: boolean) => void;
 }
 
 export const useDashboardStore = create<DashboardState>()(
@@ -41,9 +40,6 @@ export const useDashboardStore = create<DashboardState>()(
 
       commandOpen: false,
       setCommandOpen: (commandOpen) => set({ commandOpen }),
-
-      notifOpen: false,
-      setNotifOpen: (notifOpen) => set({ notifOpen }),
     }),
     {
       name: "eventsphere-dashboard",

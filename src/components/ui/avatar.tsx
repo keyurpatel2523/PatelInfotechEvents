@@ -77,22 +77,24 @@ AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 interface AvatarGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   max?: number;
   count?: number;
+  ringClassName?: string;
 }
 
-function AvatarGroup({ children, max = 4, count, className, ...props }: AvatarGroupProps) {
+function AvatarGroup({ children, max = 4, count, className, ringClassName, ...props }: AvatarGroupProps) {
   const childArray = React.Children.toArray(children);
   const visible = childArray.slice(0, max);
   const overflow = count ?? (childArray.length > max ? childArray.length - max : 0);
+  const ring = ringClassName ?? "ring-[--bg]";
 
   return (
     <div className={cn("flex items-center -space-x-2", className)} {...props}>
       {visible.map((child, i) => (
-        <div key={i} className="ring-2 ring-[--bg] rounded-full">
+        <div key={i} className={cn("ring-2 rounded-full", ring)}>
           {child}
         </div>
       ))}
       {overflow > 0 && (
-        <div className="ring-2 ring-[--bg] rounded-full">
+        <div className={cn("ring-2 rounded-full", ring)}>
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[--bg-muted] text-xs font-medium text-[--text-2]">
             +{overflow}
           </div>

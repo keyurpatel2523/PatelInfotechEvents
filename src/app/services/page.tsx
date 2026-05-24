@@ -155,14 +155,15 @@ function ServicesPageInner() {
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <Navbar />
 
-      {/* Sentinel for sticky detection */}
+      {/* Spacer for fixed Navbar + sentinel for sticky detection */}
+      <div className="h-16" />
       <div id="sticky-sentinel" className="h-px" />
 
       {/* ══════════════════════════════════════════════════
           STICKY SEARCH BAR
       ══════════════════════════════════════════════════ */}
       <div className={cn(
-        "sticky top-0 z-40 transition-all duration-200",
+        "sticky top-16 z-40 transition-all duration-200",
         isSticky && "shadow-[0_2px_20px_rgba(0,0,0,0.08)]"
       )}>
         <SearchBar
@@ -226,7 +227,7 @@ function ServicesPageInner() {
                 transition={{ duration: 0.26, ease }}
                 className="shrink-0 hidden lg:block overflow-hidden"
               >
-                <div className="sticky top-[88px] w-[272px]">
+                <div className="sticky top-[144px] w-[272px]">
                   <div className="rounded-2xl border border-[--border] bg-[--bg] p-5">
                     <FilterSidebar
                       filters={filters}

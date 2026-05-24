@@ -82,12 +82,13 @@ export function HeroSearch({ className }: { className?: string }) {
       {/* Search pill */}
       <div
         className={cn(
+          "relative z-10",
           "flex flex-col md:flex-row md:items-center",
           "rounded-2xl md:rounded-full",
           "bg-white/10 backdrop-blur-xl",
           "border border-white/20",
           "shadow-[0_8px_32px_rgba(0,0,0,0.3)]",
-          "overflow-hidden md:overflow-visible",
+          "overflow-visible",
           "divide-y divide-white/10 md:divide-y-0"
         )}
       >
@@ -128,7 +129,7 @@ export function HeroSearch({ className }: { className?: string }) {
               sideOffset={12}
               align="start"
               className={cn(
-                "z-50 w-72 rounded-2xl border border-[--border]",
+                "z-[9999] w-72 rounded-2xl border border-[--border]",
                 "bg-[--bg] shadow-[var(--shadow-xl)]",
                 "p-3",
                 "data-[state=open]:animate-in data-[state=closed]:animate-out",
@@ -205,7 +206,7 @@ export function HeroSearch({ className }: { className?: string }) {
                 exit={{ opacity: 0, y: 6 }}
                 transition={{ duration: 0.15 }}
                 className={cn(
-                  "absolute left-0 top-full mt-2 z-50 w-64",
+                  "absolute left-0 top-full mt-2 z-[9999] w-64",
                   "rounded-2xl border border-[--border] bg-[--bg]",
                   "shadow-[var(--shadow-xl)] overflow-hidden py-2"
                 )}

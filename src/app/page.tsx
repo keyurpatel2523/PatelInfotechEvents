@@ -196,7 +196,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex justify-center"
+            className="relative z-10 flex justify-center"
           >
             <HeroSearch className="w-full max-w-4xl" />
           </motion.div>
@@ -206,10 +206,10 @@ export default function HomePage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.55, duration: 0.5 }}
-            className="mt-10 flex flex-wrap items-center justify-center gap-6"
+            className="relative z-0 mt-10 flex flex-wrap items-center justify-center gap-6"
           >
             <div className="flex items-center gap-3">
-              <AvatarGroup count={2400}>
+              <AvatarGroup count={2400} ringClassName="ring-black/50">
                 {["SM", "JH", "ET", "OB"].map((l) => (
                   <Avatar key={l} size="sm">
                     <AvatarFallback className="text-[10px] font-bold bg-indigo-500 text-white">

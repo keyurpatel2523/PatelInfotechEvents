@@ -2,14 +2,19 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva } from "class-variance-authority";
-import { ChevronLeft, ChevronRight, Zap } from "lucide-react";
+import { ChevronLeft, ChevronRight, Zap, LogOut } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useDashboardStore } from "@/store/dashboard";
+import { useAuthStore } from "@/store/auth";
+import { signOut } from "@/lib/auth/client";
+import { clearSessionCookie } from "@/lib/auth/session";
 import { getNavForRole, type NavItem } from "@/lib/nav-config";
+import type { UserRole } from "@/types/auth";
 
 /* ─── CVA ────────────────────────────────────────────────── */
 const navItemVariants = cva(
@@ -121,6 +126,55 @@ function SidebarNavItem({ item, collapsed, active, onClick }: NavItemProps) {
   return content;
 }
 
+/* ─── SidebarUserRow ─────────────────────────────────────── */
+function SidebarUserRow() {
+  const router   = useRouter();
+  const authUser = useAuthStore((s) => s.user);
+
+  const displayName = authUser?.displayName ?? "User";
+  const initials    = authUser?.initials    ?? displayName.slice(0, 2).toUpperCase();
+  const avatarColor = authUser?.avatarColor ?? "#6366f1";
+  const role        = authUser?.role        ?? "customer";
+
+  const ROLE_LABEL: Record<UserRole, string> = {
+    customer:    "Customer",
+    supplier:    "Supplier",
+    admin:       "Admin",
+    super_admin: "Super Admin",
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    clearSessionCookie();
+    useAuthStore.getState().setUser(null);
+    router.push("/login");
+  };
+
+  return (
+    <div className="flex items-center gap-2.5 group">
+      <Avatar size="sm" shape="circle" className="flex-none">
+        <AvatarFallback
+          style={{ background: avatarColor, color: "white" }}
+          className="text-xs font-bold"
+        >
+          {initials}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-semibold text-[--text-1] truncate">{displayName}</p>
+        <p className="text-[10px] text-[--text-4] capitalize">{ROLE_LABEL[role as UserRole]}</p>
+      </div>
+      <button
+        onClick={handleSignOut}
+        aria-label="Sign out"
+        className="flex-none p-1.5 rounded-lg text-[--text-4] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors duration-150"
+      >
+        <LogOut className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
+
 /* ─── AppSidebar ─────────────────────────────────────────── */
 export function AppSidebar() {
   const pathname = usePathname();
@@ -129,8 +183,10 @@ export function AppSidebar() {
     toggleSidebar,
     sidebarMobileOpen,
     closeMobileSidebar,
-    role,
   } = useDashboardStore();
+
+  const authUser = useAuthStore((s) => s.user);
+  const role     = (authUser?.role ?? useDashboardStore.getState().role) as UserRole;
 
   const sections = getNavForRole(role);
 
@@ -194,7 +250,7 @@ export function AppSidebar() {
                   Event<span className="gradient-text">Sphere</span>
                 </span>
                 <span className="text-[10px] text-[--text-4] leading-none mt-0.5 uppercase tracking-widest">
-                  {role} portal
+                  {role === "super_admin" ? "super admin" : role} portal
                 </span>
               </motion.div>
             )}
@@ -254,36 +310,18 @@ export function AppSidebar() {
           ))}
         </nav>
 
-        {/* ── Bottom: role switcher + collapse ─────────── */}
+        {/* ── Bottom: user info + sign out + collapse ──── */}
         <div className="shrink-0 border-t border-[--border]">
-          {/* Role switcher (expanded only) */}
+          {/* User row (expanded only) */}
           <AnimatePresence>
             {!collapsed && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="px-3 py-2"
+                className="px-3 py-3"
               >
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[--text-4] mb-1.5 px-1">
-                  Switch view
-                </p>
-                <div className="flex gap-1">
-                  {(["admin", "supplier", "customer"] as const).map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => useDashboardStore.getState().setRole(r)}
-                      className={cn(
-                        "flex-1 rounded-lg py-1 text-[10px] font-semibold capitalize transition-all duration-150",
-                        role === r
-                          ? "bg-brand-gradient text-white shadow-sm"
-                          : "text-[--text-3] hover:bg-[--bg-muted] hover:text-[--text-2]"
-                      )}
-                    >
-                      {r}
-                    </button>
-                  ))}
-                </div>
+                <SidebarUserRow />
               </motion.div>
             )}
           </AnimatePresence>

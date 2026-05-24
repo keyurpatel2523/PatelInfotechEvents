@@ -201,7 +201,7 @@ export function EventsTable() {
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-1.5 text-sm" style={{ color: "var(--text-2)" }}>
                       <Calendar className="h-3.5 w-3.5" style={{ color: "var(--text-4)" }} />
-                      {new Date(event.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                      {new Date(event.date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
                     </div>
                   </td>
 

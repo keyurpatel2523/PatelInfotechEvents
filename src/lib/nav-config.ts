@@ -4,9 +4,10 @@ import {
   TrendingUp, FileText,
   CreditCard, Heart, User, HelpCircle,
   Globe, MapPin, Activity, ShoppingBag,
+  ShieldCheck, Sliders, Building2,
   type LucideIcon,
 } from "lucide-react";
-import type { UserRole } from "@/store/dashboard";
+import type { UserRole } from "@/types/auth";
 
 export interface NavItem {
   id: string;
@@ -27,47 +28,59 @@ export interface NavSection {
 }
 
 export const NAV_SECTIONS: NavSection[] = [
-  // ─── Admin ──────────────────────────────────────────────
+  // ─── Admin + Super Admin ────────────────────────────────
   {
     id: "admin-core",
     title: "Overview",
-    roles: ["admin"],
+    roles: ["admin", "super_admin"],
     items: [
-      { id: "dashboard",  label: "Dashboard",  href: "/dashboard",            icon: LayoutDashboard, roles: ["admin"] },
-      { id: "analytics",  label: "Analytics",  href: "/dashboard/analytics",  icon: BarChart3,       roles: ["admin"], badge: "New", badgeVariant: "default" },
-      { id: "activity",   label: "Live Feed",  href: "/dashboard/activity",   icon: Activity,        roles: ["admin"] },
+      { id: "dashboard",  label: "Dashboard",  href: "/admin",                icon: LayoutDashboard, roles: ["admin", "super_admin"] },
+      { id: "analytics",  label: "Analytics",  href: "/admin/analytics",      icon: BarChart3,       roles: ["admin", "super_admin"], badge: "New", badgeVariant: "default" },
+      { id: "activity",   label: "Live Feed",  href: "/admin/activity",       icon: Activity,        roles: ["admin", "super_admin"] },
     ],
   },
   {
     id: "admin-manage",
     title: "Manage",
-    roles: ["admin"],
+    roles: ["admin", "super_admin"],
     items: [
-      { id: "events",     label: "Events",     href: "/dashboard/events",     icon: Calendar,        roles: ["admin"], badge: 12 },
-      { id: "vendors",    label: "Vendors",    href: "/dashboard/vendors",    icon: Shield,          roles: ["admin"] },
-      { id: "users",      label: "Users",      href: "/dashboard/users",      icon: Users,           roles: ["admin"], badge: 3, badgeVariant: "danger" },
-      { id: "tickets",    label: "Tickets",    href: "/dashboard/tickets",    icon: Ticket,          roles: ["admin"] },
-      { id: "venues",     label: "Venues",     href: "/dashboard/venues",     icon: MapPin,          roles: ["admin"] },
+      { id: "suppliers",  label: "Suppliers",  href: "/admin/suppliers",      icon: Building2,       roles: ["admin", "super_admin"], badge: 3, badgeVariant: "warning" },
+      { id: "users",      label: "Users",      href: "/admin/users",          icon: Users,           roles: ["admin", "super_admin"], badge: 3, badgeVariant: "danger" },
+      { id: "bookings",   label: "Bookings",   href: "/admin/bookings",       icon: Calendar,        roles: ["admin", "super_admin"], badge: 12 },
+      { id: "tickets",    label: "Tickets",    href: "/admin/tickets",        icon: Ticket,          roles: ["admin", "super_admin"] },
+      { id: "venues",     label: "Venues",     href: "/admin/venues",         icon: MapPin,          roles: ["admin", "super_admin"] },
     ],
   },
   {
     id: "admin-finance",
     title: "Finance",
-    roles: ["admin"],
+    roles: ["admin", "super_admin"],
     items: [
-      { id: "revenue",    label: "Revenue",    href: "/dashboard/revenue",    icon: TrendingUp,      roles: ["admin"] },
-      { id: "payouts",    label: "Payouts",    href: "/dashboard/payouts",    icon: CreditCard,      roles: ["admin"] },
-      { id: "reports",    label: "Reports",    href: "/dashboard/reports",    icon: FileText,        roles: ["admin"] },
+      { id: "revenue",    label: "Revenue",    href: "/admin/revenue",        icon: TrendingUp,      roles: ["admin", "super_admin"] },
+      { id: "payouts",    label: "Payouts",    href: "/admin/payouts",        icon: CreditCard,      roles: ["admin", "super_admin"] },
+      { id: "reports",    label: "Reports",    href: "/admin/reports",        icon: FileText,        roles: ["admin", "super_admin"] },
     ],
   },
   {
     id: "admin-comms",
     title: "Communications",
-    roles: ["admin"],
+    roles: ["admin", "super_admin"],
     items: [
-      { id: "reviews",    label: "Reviews",    href: "/dashboard/reviews",    icon: Star,            roles: ["admin"] },
-      { id: "messages",   label: "Messages",   href: "/dashboard/messages",   icon: MessageSquare,   roles: ["admin"], badge: 5 },
-      { id: "broadcasts", label: "Broadcasts", href: "/dashboard/broadcasts", icon: Bell,            roles: ["admin"] },
+      { id: "reviews",    label: "Reviews",    href: "/admin/reviews",        icon: Star,            roles: ["admin", "super_admin"] },
+      { id: "messages",   label: "Messages",   href: "/admin/messages",       icon: MessageSquare,   roles: ["admin", "super_admin"], badge: 5 },
+      { id: "broadcasts", label: "Broadcasts", href: "/admin/broadcasts",     icon: Bell,            roles: ["admin", "super_admin"] },
+    ],
+  },
+  // ─── Super Admin only ───────────────────────────────────
+  {
+    id: "super-admin",
+    title: "Super Admin",
+    roles: ["super_admin"],
+    items: [
+      { id: "sa-approvals",  label: "Supplier Approvals", href: "/admin/approvals",  icon: ShieldCheck, roles: ["super_admin"], badge: 4, badgeVariant: "danger" },
+      { id: "sa-admins",     label: "Admin Accounts",     href: "/admin/admins",     icon: Shield,      roles: ["super_admin"] },
+      { id: "sa-categories", label: "Categories",         href: "/admin/categories", icon: Sliders,     roles: ["super_admin"] },
+      { id: "sa-services",   label: "All Services",       href: "/admin/services",   icon: ShoppingBag, roles: ["super_admin"] },
     ],
   },
 
@@ -147,10 +160,12 @@ export const NAV_SECTIONS: NavSection[] = [
   {
     id: "shared-settings",
     title: "System",
-    roles: ["admin", "supplier", "customer"],
+    roles: ["admin", "super_admin", "supplier", "customer"],
     items: [
-      { id: "settings",    label: "Settings",    href: "/dashboard/settings",      icon: Settings,        roles: ["admin", "supplier", "customer"] },
-      { id: "support",     label: "Support",     href: "/dashboard/support",       icon: HelpCircle,      roles: ["admin", "supplier", "customer"] },
+      { id: "settings", label: "Settings", href: "/admin/settings",     icon: Settings,   roles: ["admin", "super_admin"] },
+      { id: "settings", label: "Settings", href: "/supplier/profile",   icon: Settings,   roles: ["supplier"] },
+      { id: "settings", label: "Settings", href: "/dashboard/profile",  icon: Settings,   roles: ["customer"] },
+      { id: "support",  label: "Support",  href: "/support",            icon: HelpCircle, roles: ["admin", "super_admin", "supplier", "customer"] },
     ],
   },
 ];

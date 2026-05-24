@@ -1,0 +1,144 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* ── Helper functions ──────────────────────────────────────────── */
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isParticipant(convData) {
+      return isAuthenticated() && request.auth.uid in convData.participants;
+    }
+
+    function incomingIsParticipant() {
+      return isAuthenticated() && request.auth.uid in request.resource.data.participants;
+    }
+
+    /* ── User profiles ────────────────────────────────────────────── */
+
+    match /users/{userId} {
+      /* Users can read and update their own profile */
+      allow read, update: if isOwner(userId);
+
+      /* Super admins can read all profiles */
+      allow read: if isAuthenticated()
+                  && get(/databases/$(database)/documents/users/$(request.auth.uid))
+                       .data.role == "super_admin";
+
+      /* Profile creation via Admin SDK only (no client-side creates) */
+      allow create: if false;
+      allow delete: if false;
+    }
+
+    /* ── Public collections ────────────────────────────────────────── */
+
+    /* Categories: public read, admin write only */
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    /* Services/Events: public read */
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAuthenticated();
+    }
+
+    /* Reviews: public read, authenticated write */
+    match /reviews/{reviewId} {
+      allow read: if true;
+      allow create: if isAuthenticated()
+                    && request.resource.data.customerId == request.auth.uid;
+      allow update, delete: if isOwner(resource.data.customerId);
+    }
+
+    /* ── Bookings ──────────────────────────────────────────────────── */
+
+    match /bookings/{bookingId} {
+      /* Only the customer or supplier on this booking can read it */
+      allow read: if isAuthenticated()
+                  && (request.auth.uid == resource.data.customerId
+                      || request.auth.uid == resource.data.supplierId);
+      /* Writes handled server-side via Admin SDK in API routes */
+      allow write: if false;
+    }
+
+    /* ── Availability ──────────────────────────────────────────────── */
+
+    match /availability/{supplierId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(supplierId);
+    }
+
+    /* ── Notifications ────────────────────────────────────────────── */
+
+    match /notifications/{notificationId} {
+      /* Only the owner can read their notifications */
+      allow read: if isOwner(resource.data.userId);
+
+      /* Writes are handled server-side via Admin SDK — no client writes */
+      allow create: if false;
+
+      /* Owner can mark as read */
+      allow update: if isOwner(resource.data.userId)
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(["read"]);
+
+      allow delete: if false;
+    }
+
+    /* ── Conversations ─────────────────────────────────────────────── */
+
+    match /conversations/{conversationId} {
+      /* Only participants can read a conversation */
+      allow read: if isParticipant(resource.data);
+
+      /* Create: requester must list themselves as a participant */
+      allow create: if incomingIsParticipant();
+
+      /* Update: participants can update (lastMessage, unreadCount, etc.)
+         They cannot change the participants list itself. */
+      allow update: if isParticipant(resource.data)
+                    && request.resource.data.participants == resource.data.participants;
+
+      /* Delete: not allowed from the client */
+      allow delete: if false;
+
+      /* ── Messages subcollection ──────────────────────────────────── */
+
+      match /messages/{messageId} {
+        /* Read: only if user is a participant in the parent conversation */
+        allow read: if isAuthenticated()
+                    && request.auth.uid in
+                       get(/databases/$(database)/documents/conversations/$(conversationId))
+                         .data.participants;
+
+        /* Create: must be a participant AND must be the sender */
+        allow create: if isAuthenticated()
+                      && request.auth.uid in
+                         get(/databases/$(database)/documents/conversations/$(conversationId))
+                           .data.participants
+                      && request.resource.data.senderId == request.auth.uid
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() > 0
+                      && request.resource.data.text.size() <= 4000;
+
+        /* Update: participants can update (mark as read) */
+        allow update: if isAuthenticated()
+                      && request.auth.uid in
+                         get(/databases/$(database)/documents/conversations/$(conversationId))
+                           .data.participants;
+
+        /* Delete: not allowed from the client */
+        allow delete: if false;
+      }
+    }
+
+  }
+}

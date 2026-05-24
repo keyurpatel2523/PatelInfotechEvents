@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "@/lib/firebase";
 import { deserializeAvailability, emptyRecord } from "@/lib/availability-firestore";
+import { createBookingNotifications } from "@/lib/notifications/server";
 import type { BookingPayload, BookingRecord, CreateBookingResponse } from "@/types/booking";
 
 export async function POST(req: NextRequest) {
@@ -65,6 +66,17 @@ export async function POST(req: NextRequest) {
           { merge: true },
         );
       });
+
+      /* Fire notifications after the transaction commits — non-blocking */
+      createBookingNotifications({
+        id:           bookingId,
+        customerId:   body.customerId,
+        supplierId:   body.supplierId,
+        supplierName: body.supplierName,
+        serviceTitle: body.serviceTitle,
+        details:      body.details,
+        pricing:      body.pricing,
+      }).catch((err) => console.error("[notifications] createBookingNotifications failed:", err));
     }
     /* If Firebase isn't configured (dev/demo) skip the transaction — booking lives in memory */
 

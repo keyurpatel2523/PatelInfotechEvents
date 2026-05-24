@@ -17,6 +17,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/firebase";
+import { createPaymentNotifications } from "@/lib/notifications/server";
 
 export async function POST(req: NextRequest) {
   const body      = await req.text();
@@ -51,6 +52,8 @@ export async function POST(req: NextRequest) {
             paymentIntentId: pi.id,
             updatedAt:       new Date().toISOString(),
           });
+          createPaymentNotifications(bookingId, pi.id)
+            .catch((err) => console.error("[notifications] createPaymentNotifications failed:", err));
         }
         break;
       }
