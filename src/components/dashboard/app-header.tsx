@@ -2,12 +2,11 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
   Menu, Search, ChevronDown, Settings, LogOut,
   User, Keyboard, CreditCard, HelpCircle,
-  ShieldCheck, Zap, Crown,
+  ShieldCheck, Zap,
 } from "lucide-react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,14 +26,12 @@ function NotificationBellWrapper() {
 
 /* ─── Profile dropdown (Radix) ───────────────────────────── */
 const ROLE_META: Record<UserRole, { label: string; color: string; icon: React.ElementType }> = {
-  admin:       { label: "Admin",       color: "text-[#6366f1]",  icon: ShieldCheck },
-  super_admin: { label: "Super Admin", color: "text-rose-500",   icon: Crown       },
-  supplier:    { label: "Vendor",      color: "text-violet-500", icon: Zap         },
-  customer:    { label: "Customer",    color: "text-green-600",  icon: User        },
+  admin:    { label: "Admin",    color: "text-[#6366f1]",  icon: ShieldCheck },
+  supplier: { label: "Vendor",   color: "text-violet-500", icon: Zap         },
+  customer: { label: "Customer", color: "text-green-600",  icon: User        },
 };
 
 function ProfileDropdown() {
-  const router   = useRouter();
   const authUser = useAuthStore((s) => s.user);
   const role     = (authUser?.role ?? useDashboardStore.getState().role) as UserRole;
   const meta     = ROLE_META[role] ?? ROLE_META.customer;
@@ -49,7 +46,7 @@ function ProfileDropdown() {
     await signOut();
     clearSessionCookie();
     useAuthStore.getState().setUser(null);
-    router.push("/login");
+    window.location.href = "/login/admin";
   };
 
   return (

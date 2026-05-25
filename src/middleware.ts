@@ -4,11 +4,11 @@ import { SESSION_COOKIE, ROLE_HOME, parseSessionCookie } from "@/lib/auth/sessio
 
 /* Routes and which roles may access them */
 const PROTECTED: Array<{ prefix: string; roles: UserRole[] }> = [
-  { prefix: "/dashboard",    roles: ["customer", "admin", "super_admin"] },
+  { prefix: "/dashboard",    roles: ["customer", "admin"] },
   { prefix: "/supplier",     roles: ["supplier"] },
-  { prefix: "/admin",        roles: ["admin", "super_admin"] },
-  { prefix: "/messages",     roles: ["customer", "supplier", "admin", "super_admin"] },
-  { prefix: "/notifications",roles: ["customer", "supplier", "admin", "super_admin"] },
+  { prefix: "/admin",        roles: ["admin"] },
+  { prefix: "/messages",     roles: ["customer", "supplier", "admin"] },
+  { prefix: "/notifications",roles: ["customer", "supplier", "admin"] },
   { prefix: "/checkout",     roles: ["customer"] },
 ];
 

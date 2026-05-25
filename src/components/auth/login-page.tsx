@@ -73,7 +73,7 @@ const VARIANT_CONFIG = {
     leftBg:      "from-slate-800 via-slate-900 to-gray-900",
     headline:    "Platform Administration",
     tagline:     "Manage suppliers, customers, bookings and platform settings.",
-    demoRoles:   ["admin", "super_admin"] as UserRole[],
+    demoRoles:   ["admin"] as UserRole[],
     links: [
       { label: "Forgot password?", href: "#", align: "right" as const },
       { label: "← Back to main login",  href: "/login", align: "center" as const },

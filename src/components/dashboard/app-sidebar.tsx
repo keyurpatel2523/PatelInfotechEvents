@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva } from "class-variance-authority";
 import { ChevronLeft, ChevronRight, Zap, LogOut } from "lucide-react";
@@ -128,7 +128,6 @@ function SidebarNavItem({ item, collapsed, active, onClick }: NavItemProps) {
 
 /* ─── SidebarUserRow ─────────────────────────────────────── */
 function SidebarUserRow() {
-  const router   = useRouter();
   const authUser = useAuthStore((s) => s.user);
 
   const displayName = authUser?.displayName ?? "User";
@@ -137,17 +136,16 @@ function SidebarUserRow() {
   const role        = authUser?.role        ?? "customer";
 
   const ROLE_LABEL: Record<UserRole, string> = {
-    customer:    "Customer",
-    supplier:    "Supplier",
-    admin:       "Admin",
-    super_admin: "Super Admin",
+    customer: "Customer",
+    supplier: "Supplier",
+    admin:    "Admin",
   };
 
   const handleSignOut = async () => {
     await signOut();
     clearSessionCookie();
     useAuthStore.getState().setUser(null);
-    router.push("/login");
+    window.location.href = "/login/admin";
   };
 
   return (
@@ -250,7 +248,7 @@ export function AppSidebar() {
                   Event<span className="gradient-text">Sphere</span>
                 </span>
                 <span className="text-[10px] text-[--text-4] leading-none mt-0.5 uppercase tracking-widest">
-                  {role === "super_admin" ? "super admin" : role} portal
+                  {role} portal
                 </span>
               </motion.div>
             )}

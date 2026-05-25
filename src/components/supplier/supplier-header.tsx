@@ -3,8 +3,9 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Bell, Search, ChevronRight } from "lucide-react";
+import { Bell, Search, ChevronRight, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMobileNav } from "@/components/supplier/mobile-nav-context";
 
 /* ─── Breadcrumb from pathname ───────────────────────────────── */
 function useBreadcrumb() {
@@ -24,13 +25,15 @@ function useBreadcrumb() {
 
 /* ─── Page title map ─────────────────────────────────────────── */
 const PAGE_TITLES: Record<string, string> = {
-  "/supplier":           "Overview",
-  "/supplier/services":  "My Services",
-  "/supplier/bookings":  "Bookings",
-  "/supplier/earnings":  "Earnings",
-  "/supplier/reviews":   "Reviews",
-  "/supplier/profile":   "Profile",
-  "/supplier/settings":  "Settings",
+  "/supplier":              "Overview",
+  "/supplier/services":     "My Services",
+  "/supplier/bookings":     "Bookings",
+  "/supplier/availability": "Availability",
+  "/supplier/earnings":     "Earnings",
+  "/supplier/reviews":      "Reviews",
+  "/supplier/profile":      "Profile",
+  "/supplier/settings":     "Settings",
+  "/supplier/support":      "Support",
 };
 
 interface SupplierHeaderProps {
@@ -42,12 +45,20 @@ export function SupplierHeader({ action }: SupplierHeaderProps) {
   const pathname   = usePathname();
   const breadcrumb = useBreadcrumb();
   const title      = PAGE_TITLES[pathname] ?? "Dashboard";
+  const { toggle } = useMobileNav();
 
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-[--border] bg-[--bg]/80 backdrop-blur-lg px-5 sm:px-6 h-14 shrink-0">
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-[--border] bg-[--bg]/80 backdrop-blur-lg px-4 sm:px-6 h-14 shrink-0">
 
-      {/* ── Left: breadcrumb + title ──────────────────────── */}
-      <div className="min-w-0">
+      {/* ── Left: hamburger (mobile) + breadcrumb/title ───── */}
+      <div className="flex items-center gap-3 min-w-0">
+        {/* Hamburger — mobile only */}
+        <button
+          onClick={toggle}
+          className="lg:hidden flex h-8 w-8 items-center justify-center rounded-lg border border-[--border] bg-[--bg] text-[--text-3] hover:text-[--text-1] hover:border-[--text-4] transition-all shrink-0"
+        >
+          <Menu className="h-4 w-4" />
+        </button>
         {/* Breadcrumb (hidden on mobile) */}
         <nav className="hidden sm:flex items-center gap-1.5 text-xs text-[--text-4] mb-0.5">
           {breadcrumb.map((crumb, i) => (

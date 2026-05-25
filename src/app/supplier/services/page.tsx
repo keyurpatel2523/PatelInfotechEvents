@@ -95,37 +95,46 @@ function ServiceCard({
         <div className="absolute top-2 right-2">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <button className="h-7 w-7 flex items-center justify-center rounded-lg glass border border-white/20 text-white hover:bg-white/20 transition-colors">
+              <button className="h-8 w-8 flex items-center justify-center rounded-xl bg-white/90 backdrop-blur-sm text-zinc-700 shadow-md hover:bg-white hover:scale-105 active:scale-95 transition-all duration-150 outline-none focus:outline-none">
                 <MoreHorizontal className="h-4 w-4" />
               </button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Portal>
               <DropdownMenu.Content
                 align="end"
-                sideOffset={6}
-                className="z-50 min-w-[140px] rounded-xl border border-[--border] bg-[--bg] p-1 shadow-[var(--shadow-xl)]"
+                sideOffset={8}
+                className="z-50 min-w-[168px] rounded-2xl border border-white/60 bg-white/95 backdrop-blur-xl p-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.18)] animate-in fade-in-0 zoom-in-95"
               >
                 <DropdownMenu.Item
                   onSelect={onEdit}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[--text-2] hover:bg-[--bg-muted] hover:text-[--text-1] cursor-pointer outline-none"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-700 hover:bg-indigo-50 hover:text-indigo-700 cursor-pointer outline-none transition-colors group"
                 >
-                  <Pencil className="h-3.5 w-3.5" /> Edit
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 group-hover:bg-indigo-200 transition-colors">
+                    <Pencil className="h-3.5 w-3.5" />
+                  </span>
+                  Edit
                 </DropdownMenu.Item>
                 <DropdownMenu.Item
                   onSelect={onToggle}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-[--text-2] hover:bg-[--bg-muted] hover:text-[--text-1] cursor-pointer outline-none"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-700 hover:bg-amber-50 hover:text-amber-700 cursor-pointer outline-none transition-colors group"
                 >
-                  {service.status === "paused"
-                    ? <><Play  className="h-3.5 w-3.5" /> Activate</>
-                    : <><Pause className="h-3.5 w-3.5" /> Pause</>
-                  }
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-100 text-amber-600 group-hover:bg-amber-200 transition-colors">
+                    {service.status === "paused"
+                      ? <Play  className="h-3.5 w-3.5" />
+                      : <Pause className="h-3.5 w-3.5" />
+                    }
+                  </span>
+                  {service.status === "paused" ? "Activate" : "Pause"}
                 </DropdownMenu.Item>
-                <DropdownMenu.Separator className="my-1 h-px bg-[--border]" />
+                <DropdownMenu.Separator className="my-1.5 h-px bg-zinc-100" />
                 <DropdownMenu.Item
                   onSelect={onDelete}
-                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-500 hover:bg-red-50 dark:hover:bg-red-950 cursor-pointer outline-none"
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 hover:text-red-600 cursor-pointer outline-none transition-colors group"
                 >
-                  <Trash2 className="h-3.5 w-3.5" /> Delete
+                  <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 text-red-500 group-hover:bg-red-200 transition-colors">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </span>
+                  Delete
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Portal>

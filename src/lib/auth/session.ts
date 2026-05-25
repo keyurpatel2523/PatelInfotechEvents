@@ -23,8 +23,7 @@ export function parseSessionCookie(
 }
 
 export const ROLE_HOME: Record<UserRole, string> = {
-  customer:    "/dashboard",
-  supplier:    "/supplier",
-  admin:       "/admin",
-  super_admin: "/admin",
+  customer: "/dashboard",
+  supplier: "/supplier",
+  admin:    "/admin",
 };

@@ -1,6 +1,6 @@
 /* ── Auth domain types ───────────────────────────────────── */
 
-export type UserRole = "customer" | "supplier" | "admin" | "super_admin";
+export type UserRole = "customer" | "supplier" | "admin";
 
 export interface UserProfile {
   uid:          string;

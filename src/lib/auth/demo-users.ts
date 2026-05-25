@@ -4,22 +4,12 @@ export type DemoUser = UserProfile & { password: string };
 
 export const DEMO_USERS: DemoUser[] = [
   {
-    uid:         "super-admin-001",
-    email:       "superadmin@eventsphere.co.uk",
-    password:    "super123",
-    displayName: "Keyur Patel",
-    initials:    "KP",
-    avatarColor: "#6366f1",
-    role:        "super_admin" as UserRole,
-    createdAt:   "2024-01-01T00:00:00Z",
-  },
-  {
     uid:         "admin-001",
     email:       "admin@eventsphere.co.uk",
     password:    "admin123",
     displayName: "Sarah Mitchell",
     initials:    "SM",
-    avatarColor: "#8b5cf6",
+    avatarColor: "#6366f1",
     role:        "admin" as UserRole,
     createdAt:   "2024-01-01T00:00:00Z",
   },
@@ -48,11 +38,10 @@ export const DEMO_USERS: DemoUser[] = [
 ];
 
 export const DEMO_CREDENTIALS: Record<
-  "super_admin" | "admin" | "supplier" | "customer",
+  "admin" | "supplier" | "customer",
   { email: string; password: string; label: string }
 > = {
-  super_admin: { email: "superadmin@eventsphere.co.uk", password: "super123",    label: "Super Admin" },
-  admin:       { email: "admin@eventsphere.co.uk",      password: "admin123",    label: "Admin"       },
-  supplier:    { email: "supplier@goldentouchevents.co.uk", password: "supplier123", label: "Supplier" },
-  customer:    { email: "james@example.co.uk",          password: "customer123", label: "Customer"    },
+  admin:    { email: "admin@eventsphere.co.uk",         password: "admin123",    label: "Admin"    },
+  supplier: { email: "supplier@goldentouchevents.co.uk", password: "supplier123", label: "Supplier" },
+  customer: { email: "james@example.co.uk",             password: "customer123", label: "Customer" },
 };
